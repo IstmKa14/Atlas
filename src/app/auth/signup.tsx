@@ -14,6 +14,8 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SymbolView } from "expo-symbols";
+import { GoogleIcon } from "../../../components/icons/GoogleIcon";
+import { AppleIcon } from "../../../components/icons/AppleIcon";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -149,23 +151,12 @@ export default function SignupScreen() {
           {/* ── OAuth ───────────────────────────────────────── */}
           <View style={styles.oauthBlock}>
             <OAuthButton
-              icon={<GoogleIcon />}
+              icon={<GoogleIcon size={20} />}
               label="Continue with Google"
               onPress={handleGoogleSignUp}
             />
             <OAuthButton
-              icon={
-                <SymbolView
-                  name={{
-                    ios: "applelogo",
-                    android: "phone_iphone",
-                    web: "phone_iphone",
-                  }}
-                  size={18}
-                  tintColor={COLORS.ink}
-                  weight="medium"
-                />
-              }
+              icon={<AppleIcon size={19} color={COLORS.ink} />}
               label="Continue with Apple"
               onPress={handleAppleSignUp}
             />
@@ -351,18 +342,7 @@ function OAuthButton({
   );
 }
 
-function GoogleIcon() {
-  return (
-    <View style={styles.googleIconWrap}>
-      <SymbolView
-        name={{ ios: "g.circle.fill", android: "account_circle", web: "account_circle" }}
-        size={20}
-        tintColor="#4285F4"
-        weight="regular"
-      />
-    </View>
-  );
-}
+
 
 function OrDivider() {
   return (
@@ -441,6 +421,7 @@ const FormField = React.forwardRef<TextInput, FormFieldProps>(
             autoComplete={autoComplete}
             returnKeyType={returnKeyType}
             blurOnSubmit={returnKeyType === "done"}
+            underlineColorAndroid="transparent"
           />
           {trailingIcon && (
             <View style={styles.fieldTrailing}>{trailingIcon}</View>

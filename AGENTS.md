@@ -379,6 +379,12 @@ never use emojies use icon insted form nay icon lib but nevr use emojies
 
 
 
-## commenst 
+## comments 
 
 use less or no comments
+
+
+
+## code sepration  
+
+make diffret compnst dont put eveything in a single file make compnits in `components` folder and make sure you crete componenst 
