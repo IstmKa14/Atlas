@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Href } from "expo-router";
+import { useSignIn, useSSO } from "@clerk/expo";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SymbolView } from "expo-symbols";
@@ -61,19 +62,66 @@ export default function LoginScreen() {
     return ok;
   }, []);
 
+  const { signIn, errors, fetchStatus } = useSignIn();
+  const { startSSOFlow } = useSSO();
+
   const handleSignIn = useCallback(async () => {
+    if (!signIn) return;
     const emailOk = validateEmail(email);
     const passOk = validatePassword(password);
     if (!emailOk || !passOk) return;
 
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsLoading(false);
-    router.replace("/");
-  }, [email, password, validateEmail, validatePassword, router]);
+    try {
+      const { error } = await signIn.password({ emailAddress: email, password });
+      
+      if (error) {
+        if (error.errors && error.errors[0]) {
+          setEmailError(error.errors[0].longMessage || error.errors[0].message);
+        }
+        return;
+      }
 
-  const handleGoogleSignIn = useCallback(async () => {}, []);
-  const handleAppleSignIn = useCallback(async () => {}, []);
+      if (signIn.status === 'complete') {
+        await signIn.finalize({
+          navigate: ({ session, decorateUrl }) => {
+            const url = decorateUrl('/');
+            router.replace(url as Href);
+          }
+        });
+      }
+    } catch (e: any) {
+      if (e.errors && e.errors[0]) {
+        setEmailError(e.errors[0].longMessage || e.errors[0].message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [email, password, validateEmail, validatePassword, router, signIn]);
+
+  const handleGoogleSignIn = useCallback(async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: 'oauth_google' });
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace('/');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [startSSOFlow, router]);
+
+  const handleAppleSignIn = useCallback(async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: 'oauth_apple' });
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace('/');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [startSSOFlow, router]);
 
   return (
     <View style={styles.root}>

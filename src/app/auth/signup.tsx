@@ -10,7 +10,8 @@ import {
   KeyboardAvoidingView,
   ScrollView,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, Href } from "expo-router";
+import { useSignUp, useSSO } from "@clerk/expo";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { SymbolView } from "expo-symbols";
@@ -71,20 +72,94 @@ export default function SignupScreen() {
     return ok;
   }, []);
 
+  const { signUp, isLoaded } = useSignUp();
+  const { startSSOFlow } = useSSO();
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [code, setCode] = useState("");
+
   const handleSignUp = useCallback(async () => {
+    if (!isLoaded) return;
     const nameOk = validateName(name);
     const emailOk = validateEmail(email);
     const passOk = validatePassword(password);
     if (!nameOk || !emailOk || !passOk) return;
 
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1200));
-    setIsLoading(false);
-    router.replace("/");
-  }, [name, email, password, validateName, validateEmail, validatePassword, router]);
+    try {
+      const [firstName, ...rest] = name.trim().split(" ");
+      const lastName = rest.join(" ");
+      const { error } = await signUp.create({
+        emailAddress: email,
+        password,
+        firstName,
+        lastName: lastName || undefined,
+      });
 
-  const handleGoogleSignUp = useCallback(async () => {}, []);
-  const handleAppleSignUp = useCallback(async () => {}, []);
+      if (error) {
+        if (error.errors && error.errors[0]) {
+          setEmailError(error.errors[0].longMessage || error.errors[0].message);
+        }
+        return;
+      }
+
+      await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
+      setPendingVerification(true);
+    } catch (e: any) {
+      if (e.errors && e.errors[0]) {
+        setEmailError(e.errors[0].longMessage || e.errors[0].message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [name, email, password, validateName, validateEmail, validatePassword, router, signUp, isLoaded]);
+
+  const handleVerify = async () => {
+    if (!isLoaded) return;
+    setIsLoading(true);
+    try {
+      const completeSignUp = await signUp.attemptEmailAddressVerification({
+        code,
+      });
+      if (completeSignUp.status === 'complete') {
+        await signUp.finalize({
+          navigate: ({ session, decorateUrl }) => {
+            const url = decorateUrl('/');
+            router.replace(url as Href);
+          }
+        });
+      }
+    } catch (e: any) {
+      if (e.errors && e.errors[0]) {
+        setEmailError(e.errors[0].longMessage || e.errors[0].message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignUp = useCallback(async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: 'oauth_google' });
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace('/');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [startSSOFlow, router]);
+
+  const handleAppleSignUp = useCallback(async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({ strategy: 'oauth_apple' });
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+        router.replace('/');
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [startSSOFlow, router]);
 
   return (
     <View style={styles.root}>
@@ -147,9 +222,33 @@ export default function SignupScreen() {
 
           <OrDivider />
 
-          <View style={styles.formBlock}>
-            <FormField
-              label="Full name"
+          {pendingVerification ? (
+            <View style={styles.formBlock}>
+              <FormField
+                label="Verification Code"
+                value={code}
+                onChangeText={setCode}
+                placeholder="123456"
+                keyboardType="number-pad"
+              />
+              <TouchableOpacity
+                style={[styles.primaryBtn, isLoading && styles.primaryBtnLoading]}
+                onPress={handleVerify}
+                activeOpacity={0.85}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <ActivityIndicator size="small" color="#ffffff" />
+                ) : (
+                  <Text style={styles.primaryBtnText}>Verify Email</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={{ flex: 1 }}>
+              <View style={styles.formBlock}>
+                <FormField
+                  label="Full name"
               value={name}
               onChangeText={(t) => {
                 setName(t);
@@ -256,36 +355,38 @@ export default function SignupScreen() {
                 </TouchableOpacity>
               }
             />
-          </View>
+            </View>
 
-          <Text style={styles.termsText}>
-            By creating an account, you agree to our{" "}
-            <Text style={styles.termsLink}>Terms of Service</Text> and{" "}
-            <Text style={styles.termsLink}>Privacy Policy</Text>.
-          </Text>
+            <Text style={styles.termsText}>
+              By creating an account, you agree to our{" "}
+              <Text style={styles.termsLink}>Terms of Service</Text> and{" "}
+              <Text style={styles.termsLink}>Privacy Policy</Text>.
+            </Text>
 
-          <TouchableOpacity
-            style={[styles.primaryBtn, isLoading && styles.primaryBtnLoading]}
-            onPress={handleSignUp}
-            activeOpacity={0.85}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color="#ffffff" />
-            ) : (
-              <Text style={styles.primaryBtnText}>Create account</Text>
-            )}
-          </TouchableOpacity>
-
-          <View style={styles.footerRow}>
-            <Text style={styles.footerLabel}>Already have an account? </Text>
             <TouchableOpacity
-              activeOpacity={0.6}
-              onPress={() => router.back()}
+              style={[styles.primaryBtn, isLoading && styles.primaryBtnLoading]}
+              onPress={handleSignUp}
+              activeOpacity={0.85}
+              disabled={isLoading}
             >
-              <Text style={styles.footerLink}>Sign in</Text>
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#ffffff" />
+              ) : (
+                <Text style={styles.primaryBtnText}>Create account</Text>
+              )}
             </TouchableOpacity>
+
+            <View style={styles.footerRow}>
+              <Text style={styles.footerLabel}>Already have an account? </Text>
+              <TouchableOpacity
+                activeOpacity={0.6}
+                onPress={() => router.back()}
+              >
+                <Text style={styles.footerLink}>Sign in</Text>
+              </TouchableOpacity>
+            </View>
           </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </View>

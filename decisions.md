@@ -45,3 +45,24 @@ All Atlas design tokens (colors, typography, spacing, radius, shadows) from `DES
 **Impact:**
 - All components must use NativeWind className instead of inline StyleSheet for colors/spacing/typography.
 - Token names match DESIGN.md exactly (e.g. `bg-canvas`, `text-ink`, `rounded-pill`).
+
+---
+
+## Decision: Clerk for Authentication
+
+**Date:** 2026-07-26
+
+**Decision:**
+Use Clerk (`@clerk/expo`) with custom flows (`useSignIn`, `useSignUp`, `useSSO`) for authentication.
+
+**Reason:**
+- User requested Clerk authentication via the `clerk-expo` skill.
+- The project already had custom auth UI screens (`login.tsx` and `signup.tsx`), so custom hooks were the natural choice over prebuilt native components (`AuthView`).
+
+**Alternatives Considered:**
+- Prebuilt components (`AuthView`) — rejected because it overrides the custom UI already created.
+- Supabase/Custom backend — rejected as the user explicitly asked for Clerk setup and provided the Clerk publishable key.
+
+**Impact:**
+- The root layout is wrapped in `ClerkProvider` using `expo-secure-store` for the token cache.
+- `login.tsx` and `signup.tsx` now use `useSignIn`, `useSignUp`, and `useSSO` to hook up email/password and social login.

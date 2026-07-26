@@ -15,8 +15,8 @@
 
 ✅ Onboarding UI (4 slides — splash, welcome/features, capture, reflect)
 ✅ Authentication UI (login + signup — email/password, Google, Apple, validation states)
-⬜ Auth provider wiring (Clerk / Supabase / custom)
-⬜ Home / Feed Screen
+✅ Auth provider wiring (Clerk)
+✅ Home / Feed Screen
 ⬜ Create Memory
 ⬜ Delete Memory
 ⬜ Weekly AI Summary
