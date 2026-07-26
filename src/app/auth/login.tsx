@@ -17,27 +17,21 @@ import { SymbolView } from "expo-symbols";
 import { GoogleIcon } from "../../../components/icons/GoogleIcon";
 import { AppleIcon } from "../../../components/icons/AppleIcon";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+import { FormField } from "../../../components/auth/FormField";
+import { OAuthButton } from "../../../components/auth/OAuthButton";
+import { OrDivider } from "../../../components/auth/OrDivider";
+import { OrbLayer } from "../../../components/auth/OrbLayer";
+import { AtlasLogo } from "../../../components/auth/AuthLogos";
 
 const COLORS = {
   canvas: "#f5f5f5",
   ink: "#0c0a09",
-  primary: "#292524",
-  body: "#4e4e4e",
   muted: "#777169",
   mutedSoft: "#a8a29e",
   hairline: "#e7e5e4",
-  hairlineStrong: "#d6d3d1",
   surfaceCard: "#ffffff",
-  surfaceStrong: "#f0efed",
   error: "#dc2626",
-  orbPeach: "#f4c5a8",
-  orbMint: "#a7e5d3",
-  orbLavender: "#c8b8e0",
-  orbRose: "#e8b8c4",
 } as const;
-
-// ─── Main Screen ──────────────────────────────────────────────────────────────
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -73,26 +67,19 @@ export default function LoginScreen() {
     if (!emailOk || !passOk) return;
 
     setIsLoading(true);
-    // TODO: wire to auth provider
     await new Promise((r) => setTimeout(r, 1200));
     setIsLoading(false);
     router.replace("/");
   }, [email, password, validateEmail, validatePassword, router]);
 
-  const handleGoogleSignIn = useCallback(async () => {
-    // TODO: wire to Google OAuth
-  }, []);
-
-  const handleAppleSignIn = useCallback(async () => {
-    // TODO: wire to Apple Sign In
-  }, []);
+  const handleGoogleSignIn = useCallback(async () => {}, []);
+  const handleAppleSignIn = useCallback(async () => {}, []);
 
   return (
     <View style={styles.root}>
       <StatusBar style="dark" />
-      <OrbLayer />
+      <OrbLayer variant="login" />
 
-      {/* Back button */}
       <TouchableOpacity
         style={[styles.backBtn, { top: insets.top + 12 }]}
         onPress={() => router.back()}
@@ -122,16 +109,13 @@ export default function LoginScreen() {
           showsVerticalScrollIndicator={false}
           bounces={false}
         >
-          {/* ── Brand mark ─────────────────────────────────── */}
           <AtlasLogo />
 
-          {/* ── Heading ────────────────────────────────────── */}
           <View style={styles.headingBlock}>
             <Text style={styles.headlineText}>Welcome back</Text>
             <Text style={styles.subheadText}>Sign in to continue your journey</Text>
           </View>
 
-          {/* ── OAuth buttons ──────────────────────────────── */}
           <View style={styles.oauthBlock}>
             <OAuthButton
               icon={<GoogleIcon size={20} />}
@@ -145,10 +129,8 @@ export default function LoginScreen() {
             />
           </View>
 
-          {/* ── Divider ─────────────────────────────────────── */}
           <OrDivider />
 
-          {/* ── Form ────────────────────────────────────────── */}
           <View style={styles.formBlock}>
             <FormField
               label="Email"
@@ -215,17 +197,15 @@ export default function LoginScreen() {
               }
             />
 
-            {/* Forgot password */}
             <TouchableOpacity
               style={styles.forgotRow}
               activeOpacity={0.6}
-              onPress={() => {/* TODO: forgot password */}}
+              onPress={() => {}}
             >
               <Text style={styles.forgotText}>Forgot password?</Text>
             </TouchableOpacity>
           </View>
 
-          {/* ── Primary CTA ─────────────────────────────────── */}
           <TouchableOpacity
             style={[styles.primaryBtn, isLoading && styles.primaryBtnLoading]}
             onPress={handleSignIn}
@@ -239,7 +219,6 @@ export default function LoginScreen() {
             )}
           </TouchableOpacity>
 
-        
           <View style={styles.footerRow}>
             <Text style={styles.footerLabel}>Don&apos;t have an account? </Text>
             <TouchableOpacity
@@ -255,165 +234,6 @@ export default function LoginScreen() {
   );
 }
 
-// ─── Atlas Logo mark ──────────────────────────────────────────────────────────
-
-function AtlasLogo() {
-  return (
-    <View style={styles.logoBlock}>
-      {/* The "A" with the gradient orb behind it */}
-      <View style={styles.glyphWrapper}>
-        <View style={styles.glyphOrb} />
-        <Text style={styles.glyphA}>A</Text>
-      </View>
-      {/* Wave decoration */}
-      <View style={styles.wavesRow}>
-        <Text style={styles.waveGlyph}>{"~  ~  ~"}</Text>
-      </View>
-      <Text style={styles.brandName}>ATLAS</Text>
-      <Text style={styles.brandTagline}>Your life, beautifully remembered.</Text>
-    </View>
-  );
-}
-
-// ─── OAuth Button ─────────────────────────────────────────────────────────────
-
-interface OAuthButtonProps {
-  icon: React.ReactNode;
-  label: string;
-  onPress: () => void;
-}
-
-function OAuthButton({ icon, label, onPress }: OAuthButtonProps) {
-  return (
-    <TouchableOpacity
-      style={styles.oauthBtn}
-      onPress={onPress}
-      activeOpacity={0.75}
-    >
-      <View style={styles.oauthIcon}>{icon}</View>
-      <Text style={styles.oauthLabel}>{label}</Text>
-    </TouchableOpacity>
-  );
-}
-
-// ─── Google icon (painted to match the real logo) ─────────────────────────────
-
-
-
-// ─── OR Divider ───────────────────────────────────────────────────────────────
-
-function OrDivider() {
-  return (
-    <View style={styles.dividerRow}>
-      <View style={styles.dividerLine} />
-      <Text style={styles.dividerText}>OR</Text>
-      <View style={styles.dividerLine} />
-    </View>
-  );
-}
-
-// ─── Form field ───────────────────────────────────────────────────────────────
-
-interface FormFieldProps {
-  label: string;
-  value: string;
-  onChangeText: (v: string) => void;
-  onBlur?: () => void;
-  onFocus?: () => void;
-  onSubmitEditing?: () => void;
-  isFocused?: boolean;
-  error?: string;
-  placeholder: string;
-  secureTextEntry?: boolean;
-  keyboardType?: "email-address" | "default";
-  autoCapitalize?: "none" | "sentences";
-  autoComplete?: "email" | "password";
-  returnKeyType?: "next" | "done";
-  trailingIcon?: React.ReactNode;
-}
-
-const FormField = React.forwardRef<TextInput, FormFieldProps>(
-  (
-    {
-      label,
-      value,
-      onChangeText,
-      onBlur,
-      onFocus,
-      onSubmitEditing,
-      isFocused,
-      error,
-      placeholder,
-      secureTextEntry,
-      keyboardType,
-      autoCapitalize,
-      autoComplete,
-      returnKeyType,
-      trailingIcon,
-    },
-    ref
-  ) => {
-    const hasError = Boolean(error);
-    return (
-      <View style={styles.fieldWrapper}>
-        <Text style={styles.fieldLabel}>{label}</Text>
-        <View
-          style={[
-            styles.fieldInputRow,
-            isFocused && styles.fieldInputFocused,
-            hasError && styles.fieldInputError,
-          ]}
-        >
-          <TextInput
-            ref={ref}
-            style={styles.fieldInput}
-            value={value}
-            onChangeText={onChangeText}
-            onBlur={onBlur}
-            onFocus={onFocus}
-            onSubmitEditing={onSubmitEditing}
-            placeholder={placeholder}
-            placeholderTextColor={COLORS.mutedSoft}
-            secureTextEntry={secureTextEntry}
-            keyboardType={keyboardType}
-            autoCapitalize={autoCapitalize}
-            autoCorrect={false}
-            autoComplete={autoComplete}
-            returnKeyType={returnKeyType}
-            blurOnSubmit={returnKeyType === "done"}
-            underlineColorAndroid="transparent"
-          />
-          {trailingIcon && (
-            <View style={styles.fieldTrailing}>{trailingIcon}</View>
-          )}
-        </View>
-        {hasError && (
-          <Text style={styles.fieldError}>{error}</Text>
-        )}
-      </View>
-    );
-  }
-);
-
-FormField.displayName = "FormField";
-
-// ─── Orb layer ────────────────────────────────────────────────────────────────
-
-function OrbLayer() {
-  return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
-      <View style={[styles.orb, styles.orbTopRight]} />
-      <View style={[styles.orb, styles.orbLeftCenter]} />
-      <View style={[styles.orb, styles.orbBottomRight]} />
-      <View style={[styles.orb, styles.orbBottomLeft]} />
-    </View>
-  );
-}
-
-// ─── Styles ───────────────────────────────────────────────────────────────────
-
-const ORB = 300;
-
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -425,8 +245,6 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: 24,
   },
-
-  // ── Back button ─────────────────────────────────────
   backBtn: {
     position: "absolute",
     left: 20,
@@ -440,110 +258,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-
-  // ── Orbs ────────────────────────────────────────────
-  orb: {
-    position: "absolute",
-    width: ORB,
-    height: ORB,
-    borderRadius: ORB / 2,
-    opacity: 0.5,
-  },
-  orbTopRight: {
-    backgroundColor: COLORS.orbPeach,
-    top: -ORB * 0.3,
-    right: -ORB * 0.3,
-    ...Platform.select({
-      ios: {
-        shadowColor: COLORS.orbPeach,
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.55,
-        shadowRadius: 80,
-      },
-    }),
-  },
-  orbLeftCenter: {
-    backgroundColor: COLORS.orbMint,
-    top: "35%",
-    left: -ORB * 0.45,
-    opacity: 0.4,
-  },
-  orbBottomRight: {
-    backgroundColor: COLORS.orbLavender,
-    bottom: -ORB * 0.35,
-    right: -ORB * 0.35,
-    opacity: 0.45,
-  },
-  orbBottomLeft: {
-    backgroundColor: COLORS.orbRose,
-    bottom: -ORB * 0.45,
-    left: -ORB * 0.4,
-    opacity: 0.3,
-  },
-
-  // ── Logo mark ────────────────────────────────────────
-  logoBlock: {
-    alignItems: "center",
-    marginBottom: 28,
-  },
-  glyphWrapper: {
-    width: 140,
-    height: 140,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 2,
-  },
-  glyphOrb: {
-    position: "absolute",
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: "#f0d8cc",
-    right: 12,
-    top: 12,
-    opacity: 0.9,
-    ...Platform.select({
-      ios: {
-        shadowColor: COLORS.orbMint,
-        shadowOffset: { width: -14, height: 8 },
-        shadowOpacity: 0.75,
-        shadowRadius: 28,
-      },
-    }),
-  },
-  glyphA: {
-    fontSize: 110,
-    fontWeight: "700",
-    color: COLORS.ink,
-    lineHeight: 120,
-    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
-  },
-  wavesRow: {
-    marginBottom: 12,
-    opacity: 0.3,
-  },
-  waveGlyph: {
-    fontSize: 16,
-    color: COLORS.muted,
-    letterSpacing: 6,
-  },
-  brandName: {
-    fontSize: 26,
-    fontWeight: "300",
-    letterSpacing: 11,
-    color: COLORS.ink,
-    fontFamily: Platform.OS === "ios" ? "Georgia" : "serif",
-    marginBottom: 8,
-  },
-  brandTagline: {
-    fontSize: 14,
-    fontWeight: "400",
-    color: COLORS.muted,
-    letterSpacing: 0.3,
-    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
-  },
-
-  // ── Heading ──────────────────────────────────────────
   headingBlock: {
     alignItems: "center",
     marginBottom: 24,
@@ -563,130 +277,14 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
     fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
   },
-
-  // ── OAuth ────────────────────────────────────────────
   oauthBlock: {
     gap: 10,
     marginBottom: 20,
   },
-  oauthBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: COLORS.surfaceCard,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: COLORS.hairline,
-    height: 56,
-    paddingHorizontal: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    elevation: 1,
-  },
-  oauthIcon: {
-    width: 24,
-    alignItems: "center",
-    marginRight: 0,
-  },
-  oauthLabel: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 15,
-    fontWeight: "600",
-    color: COLORS.ink,
-    letterSpacing: 0,
-    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
-    marginRight: 24, // compensate for icon so text is truly centered
-  },
-  googleIconWrap: {
-    width: 24,
-    height: 24,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  // ── OR divider ───────────────────────────────────────
-  dividerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 20,
-    gap: 12,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: COLORS.hairline,
-  },
-  dividerText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: COLORS.mutedSoft,
-    letterSpacing: 1.2,
-    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
-  },
-
-  // ── Form ─────────────────────────────────────────────
   formBlock: {
     gap: 4,
     marginBottom: 20,
   },
-  fieldWrapper: {
-    marginBottom: 12,
-  },
-  fieldLabel: {
-    fontSize: 13,
-    fontWeight: "500",
-    color: COLORS.primary,
-    letterSpacing: 0.1,
-    marginBottom: 6,
-    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
-  },
-  fieldInputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: COLORS.surfaceCard,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: COLORS.hairlineStrong,
-    height: 52,
-    paddingHorizontal: 16,
-  },
-  fieldInputFocused: {
-    borderColor: COLORS.ink,
-    borderWidth: 2,
-  },
-  fieldInputError: {
-    borderColor: COLORS.error,
-    borderWidth: 1.5,
-  },
-  fieldInput: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: "400",
-    color: COLORS.ink,
-    letterSpacing: 0.1,
-    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
-    padding: 0,
-    borderWidth: 0,
-    // @ts-ignore
-    outlineStyle: "none",
-  },
-  fieldTrailing: {
-    marginLeft: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  fieldError: {
-    fontSize: 12,
-    fontWeight: "400",
-    color: COLORS.error,
-    marginTop: 4,
-    letterSpacing: 0.1,
-    fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
-  },
-
-  // ── Forgot password ──────────────────────────────────
   forgotRow: {
     alignSelf: "flex-end",
     marginTop: 2,
@@ -698,8 +296,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
     fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
   },
-
-  // ── Primary CTA ──────────────────────────────────────
   primaryBtn: {
     backgroundColor: COLORS.ink,
     borderRadius: 9999,
@@ -723,8 +319,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
   },
-
-  // ── Footer ───────────────────────────────────────────
   footerRow: {
     flexDirection: "row",
     justifyContent: "center",

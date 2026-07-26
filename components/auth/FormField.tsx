@@ -53,7 +53,7 @@ export const FormField = React.forwardRef<TextInput, FormFieldProps>(
         >
           <TextInput
             ref={ref}
-            style={styles.fieldInput}
+            style={[styles.fieldInput, { outlineStyle: "none" } as any]}
             value={value}
             onChangeText={onChangeText}
             onBlur={onBlur}
@@ -121,8 +121,6 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
     padding: 0,
     borderWidth: 0,
-    // @ts-ignore
-    outlineStyle: "none",
   },
   fieldTrailing: {
     marginLeft: 10,
