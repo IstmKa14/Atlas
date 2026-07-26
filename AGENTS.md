@@ -369,3 +369,4 @@ Before saying "Done"
 ✓ No duplicated code
 
 ✓ UI follows DESIGN.md
+nevr use emojies use icon insted form nay icon lib but nevr use emojies

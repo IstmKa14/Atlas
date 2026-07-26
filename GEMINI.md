@@ -369,3 +369,9 @@ Before saying "Done"
 ✓ No duplicated code
 
 ✓ UI follows DESIGN.md
+
+
+
+## No Emojies
+
+never use emojies use icon insted form nay icon lib but nevr use emojies

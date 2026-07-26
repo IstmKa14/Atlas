@@ -1,18 +1,10 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Redirect } from "expo-router";
 
-export default function Index() {
-  return (
-    <View style={styles.container}>
-      <Text>Hello from atals your own whatever you want to put here 
-        .</Text>
-    </View>
-  );
+/**
+ * Root entry — redirects to the onboarding flow.
+ * Once auth is implemented, this will conditionally redirect
+ * to the authenticated home screen instead.
+ */
+export default function Root() {
+  return <Redirect href="/onboarding" />;
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

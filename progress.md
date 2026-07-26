@@ -13,6 +13,7 @@
 
 ## Features
 
+✅ Onboarding UI (4 slides — splash, welcome/features, capture, reflect)
 ⬜ Authentication
 ⬜ Home / Feed Screen
 ⬜ Create Memory
