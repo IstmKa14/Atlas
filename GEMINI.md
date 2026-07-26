@@ -254,6 +254,7 @@ Impact
 
 Never overwrite history.
 
+
 Append only.
 
 ---

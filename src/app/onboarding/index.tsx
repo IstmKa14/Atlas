@@ -13,6 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SymbolView } from "expo-symbols";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -208,19 +209,40 @@ function SlideWelcome({ width }: { width: number }) {
         {/* Feature cards */}
         <View style={styles.featureCards}>
           <FeatureCard
-            icon="📷"
+            icon={
+              <SymbolView
+                name={{ ios: "camera", android: "camera_alt", web: "camera_alt" }}
+                size={22}
+                tintColor="#2d7a5e"
+                weight="regular"
+              />
+            }
             iconBg="#e8f7f2"
             title="Capture Moments"
             description="Save photos, notes, places and memories that matter."
           />
           <FeatureCard
-            icon="✦"
+            icon={
+              <SymbolView
+                name={{ ios: "sparkles", android: "auto_awesome", web: "auto_awesome" }}
+                size={22}
+                tintColor="#a05a3a"
+                weight="regular"
+              />
+            }
             iconBg="#fce9e0"
             title="AI Reflections"
             description="Get beautiful daily, weekly and monthly insights."
           />
           <FeatureCard
-            icon="📅"
+            icon={
+              <SymbolView
+                name={{ ios: "calendar", android: "calendar_month", web: "calendar_month" }}
+                size={22}
+                tintColor="#6b4fa0"
+                weight="regular"
+              />
+            }
             iconBg="#ede9f5"
             title="Rediscover & Relive"
             description="Explore your timeline, revisit moments, and see how far you've come."
@@ -238,7 +260,12 @@ function SlideCapture({ width }: { width: number }) {
     <View style={[styles.slide, { width }]}>
       <View style={styles.centeredSlideContent}>
         <View style={[styles.bigIcon, { backgroundColor: "#e8f7f2" }]}>
-          <Text style={styles.bigIconText}>📷</Text>
+          <SymbolView
+            name={{ ios: "camera", android: "camera_alt", web: "camera_alt" }}
+            size={36}
+            tintColor="#2d7a5e"
+            weight="regular"
+          />
         </View>
         <Text style={styles.slideEyebrow}>MOMENTS</Text>
         <Text style={styles.slideHeadline}>
@@ -260,7 +287,12 @@ function SlideReflect({ width }: { width: number }) {
     <View style={[styles.slide, { width }]}>
       <View style={styles.centeredSlideContent}>
         <View style={[styles.bigIcon, { backgroundColor: "#fce9e0" }]}>
-          <Text style={styles.bigIconText}>✦</Text>
+          <SymbolView
+            name={{ ios: "sparkles", android: "auto_awesome", web: "auto_awesome" }}
+            size={36}
+            tintColor="#a05a3a"
+            weight="regular"
+          />
         </View>
         <Text style={styles.slideEyebrow}>AI REFLECTIONS</Text>
         <Text style={styles.slideHeadline}>
@@ -278,7 +310,7 @@ function SlideReflect({ width }: { width: number }) {
 // ─── Feature Card ─────────────────────────────────────────────────────────────
 
 interface FeatureCardProps {
-  icon: string;
+  icon: React.ReactNode;
   iconBg: string;
   title: string;
   description: string;
@@ -288,7 +320,7 @@ function FeatureCard({ icon, iconBg, title, description }: FeatureCardProps) {
   return (
     <View style={styles.featureCard}>
       <View style={[styles.featureIconWrap, { backgroundColor: iconBg }]}>
-        <Text style={styles.featureIcon}>{icon}</Text>
+        {icon}
       </View>
       <View style={styles.featureCardText}>
         <Text style={styles.featureTitle}>{title}</Text>
@@ -497,9 +529,7 @@ const styles = StyleSheet.create({
     marginRight: 14,
     flexShrink: 0,
   },
-  featureIcon: {
-    fontSize: 22,
-  },
+
   featureCardText: {
     flex: 1,
   },
@@ -531,9 +561,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 28,
   },
-  bigIconText: {
-    fontSize: 34,
-  },
+
   slideEyebrow: {
     fontSize: 12,
     fontWeight: "600",
