@@ -254,6 +254,7 @@ Impact
 
 Never overwrite history.
 
+
 Append only.
 
 ---
@@ -369,4 +370,15 @@ Before saying "Done"
 ✓ No duplicated code
 
 ✓ UI follows DESIGN.md
-nevr use emojies use icon insted form nay icon lib but nevr use emojies
+
+
+
+## No Emojies
+
+never use emojies use icon insted form nay icon lib but nevr use emojies
+
+
+
+## commenst 
+
+use less or no comments

@@ -14,7 +14,8 @@
 ## Features
 
 ✅ Onboarding UI (4 slides — splash, welcome/features, capture, reflect)
-⬜ Authentication
+✅ Authentication UI (login + signup — email/password, Google, Apple, validation states)
+⬜ Auth provider wiring (Clerk / Supabase / custom)
 ⬜ Home / Feed Screen
 ⬜ Create Memory
 ⬜ Delete Memory

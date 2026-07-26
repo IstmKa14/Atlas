@@ -48,19 +48,16 @@ export default function OnboardingScreen() {
       scrollRef.current?.scrollTo({ x: next * SCREEN_WIDTH, animated: true });
       setActiveIndex(next);
     } else {
-      // TODO: replace with auth route once auth screens are created
-      router.replace("/");
+      router.replace("/auth/signup");
     }
   }, [activeIndex, router]);
 
   const goToSignIn = useCallback(() => {
-    // TODO: replace with auth route once auth screens are created
-    router.replace("/");
+    router.replace("/auth/login");
   }, [router]);
 
   const skip = useCallback(() => {
-    // TODO: replace with auth route once auth screens are created
-    router.replace("/");
+    router.replace("/auth/login");
   }, [router]);
 
   const isSplash = activeIndex === 0;

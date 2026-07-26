@@ -376,3 +376,9 @@ Before saying "Done"
 ## No Emojies
 
 never use emojies use icon insted form nay icon lib but nevr use emojies
+
+
+
+## commenst 
+
+use less or no comments
