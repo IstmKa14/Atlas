@@ -174,7 +174,10 @@ export default function SignupScreen() {
                 setName(t);
                 if (nameError) setNameError("");
               }}
-              onBlur={() => name && validateName(name)}
+              onBlur={() => {
+                setNameFocused(false);
+                if (name) validateName(name);
+              }}
               onFocus={() => setNameFocused(true)}
               onSubmitEditing={() => emailRef.current?.focus()}
               isFocused={nameFocused}
@@ -201,7 +204,10 @@ export default function SignupScreen() {
                 setEmail(t);
                 if (emailError) setEmailError("");
               }}
-              onBlur={() => email && validateEmail(email)}
+              onBlur={() => {
+                setEmailFocused(false);
+                if (email) validateEmail(email);
+              }}
               onFocus={() => setEmailFocused(true)}
               onSubmitEditing={() => passwordRef.current?.focus()}
               isFocused={emailFocused}
@@ -229,7 +235,10 @@ export default function SignupScreen() {
                 setPassword(t);
                 if (passwordError) setPasswordError("");
               }}
-              onBlur={() => password && validatePassword(password)}
+              onBlur={() => {
+                setPasswordFocused(false);
+                if (password) validatePassword(password);
+              }}
               onFocus={() => setPasswordFocused(true)}
               onSubmitEditing={handleSignUp}
               isFocused={passwordFocused}
@@ -686,6 +695,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
     fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
     padding: 0,
+    borderWidth: 0,
+    // @ts-ignore
+    outlineStyle: "none",
   },
   fieldTrailing: {
     marginLeft: 10,

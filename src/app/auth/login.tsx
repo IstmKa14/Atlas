@@ -154,7 +154,10 @@ export default function LoginScreen() {
               label="Email"
               value={email}
               onChangeText={(t) => { setEmail(t); if (emailError) setEmailError(""); }}
-              onBlur={() => email && validateEmail(email)}
+              onBlur={() => {
+                setEmailFocused(false);
+                if (email) validateEmail(email);
+              }}
               onFocus={() => setEmailFocused(true)}
               onSubmitEditing={() => passwordRef.current?.focus()}
               isFocused={emailFocused}
@@ -179,7 +182,10 @@ export default function LoginScreen() {
               label="Password"
               value={password}
               onChangeText={(t) => { setPassword(t); if (passwordError) setPasswordError(""); }}
-              onBlur={() => password && validatePassword(password)}
+              onBlur={() => {
+                setPasswordFocused(false);
+                if (password) validatePassword(password);
+              }}
               onFocus={() => setPasswordFocused(true)}
               onSubmitEditing={handleSignIn}
               isFocused={passwordFocused}
@@ -662,6 +668,9 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1,
     fontFamily: Platform.OS === "ios" ? "System" : "sans-serif",
     padding: 0,
+    borderWidth: 0,
+    // @ts-ignore
+    outlineStyle: "none",
   },
   fieldTrailing: {
     marginLeft: 10,
